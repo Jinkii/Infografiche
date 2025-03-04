@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmi di Ordinamento e Ricerca Binaria</title>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #357ab8;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        button.search-button {
+            background-color: #9c27b0;
+        }
+        
+        button.search-button:hover:not(:disabled) {
+            background-color: #7b1fa2;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        
+        input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 80px;
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .visualization {
+            display: flex;
+            height: 250px;
+            align-items: flex-end;
+            justify-content: center;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .bar {
+            margin: 0 2px;
+            background-color: #4a90e2;
+            transition: height 0.3s ease;
+            width: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .bar-value {
+            margin-top: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .step-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        .info {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .compare {
+            background-color: yellow !important;
+        }
+
+        .swap {
+            background-color: red !important;
+        }
+
+        .pivot {
+            background-color: purple !important;
+        }
+
+        .found {
+            background-color: lime !important;
+        }
+        
+        .search-range {
+            background-color: lightblue !important;
+        }
+        
+        .search-mid {
+            background-color: blue !important;
+            color: white;
+        }
+        
+        .done {
+            background-color: green !important;
+        }
+        
+        .search-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .tab-controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f5f5f5;
+            border-radius: 4px 4px 0 0;
+            margin: 0 5px;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 2px solid #4a90e2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const AlgorithmsVisualizer = () => {
+            const [array, setArray] = useState([]);
+            const [algorithm, setAlgorithm] = useState('bubble');
+            const [animations, setAnimations] = useState([]);
+            const [currentStep, setCurrentStep] = useState(0);
+            const [isSorting, setIsSorting] = useState(false);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [playbackSpeed, setPlaybackSpeed] = useState(500);
+            const [playbackInterval, setPlaybackInterval] = useState(null);
+            const [searchValue, setSearchValue] = useState('');
+            const [isSorted, setIsSorted] = useState(false);
+            const [activeTab, setActiveTab] = useState('sort'); // 'sort' o 'search'
+            
+            // Riferimento all'array originale prima dell'ordinamento
+            const originalArrayRef = useRef([]);
+            // Riferimento all'array che viene modificato durante l'ordinamento
+            const sortingArrayRef = useRef([]);
+
+            // Genera un nuovo array casuale
+            const generateArray = () => {
+                const newArray = [];
+                for (let i = 0; i < 12; i++) {
+                    newArray.push(Math.floor(Math.random() * 80) + 10);
+                }
+                setArray(newArray);
+                originalArrayRef.current = [...newArray];
+                sortingArrayRef.current = [...newArray];
+                setAnimations([]);
+                setCurrentStep(0);
+                setIsSorting(false);
+                setIsSorted(false);
+                if (playbackInterval) {
+                    clearInterval(playbackInterval);
+                    setPlaybackInterval(null);
+                }
+                setIsPlaying(false);
+            };
+
+            // Inizializza l'array all'avvio
+            useEffect(() => {
+                generateArray();
+            }, []);
+
+            // Bubble Sort
+            const bubbleSort = () => {
+                const steps = [];
+                const arr = [...originalArrayRef.current];
+                const n = arr.length;
+
+                for (let i = 0; i < n - 1; i++) {
+                    for (let j = 0; j < n - i - 1; j++) {
+                        // Aggiunge un passo per il confronto
+                        steps.push({
+                            type: 'compare',
+                            indices: [j, j + 1],
+                            array: [...arr]
+                        });
+
+                        if (arr[j] > arr[j + 1]) {
+                            // Esegue lo scambio
+                            const temp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = temp;
+                            
+                            // Aggiunge un passo per lo scambio
+                            steps.push({
+                                type: 'swap',
+                                indices: [j, j + 1],
+                                array: [...arr]
+                            });
+                        }
+                    }
+                }
+
+                // Aggiungi un passo finale per indicare che l'ordinamento è completo
+                steps.push({
+                    type: 'done',
+                    array: [...arr]
+                });
+
+                return { steps, sortedArray: arr };
+            };
+
+            // Selection Sort
+            const selectionSort = () => {
+                const steps = [];
+                const arr = [...originalArrayRef.current];
+                const n = arr.length;
+
+                for (let i = 0; i < n - 1; i++) {
+                    let minIdx = i;
+
+                    for (let j = i + 1; j < n; j++) {
+                        // Aggiunge un passo per il confronto
+                        steps.push({
+                            type: 'compare',
+                            indices: [minIdx, j],
+                            array: [...arr]
+                        });
+
+                        if (arr[j] < arr[minIdx]) {
+                            minIdx = j;
+                        }
+                    }
+
+                    if (minIdx !== i) {
+                        // Esegue lo scambio
+                        const temp = arr[i];
+                        arr[i] = arr[minIdx];
+                        arr[minIdx] = temp;
+                        
+                        // Aggiunge un passo per lo scambio
+                        steps.push({
+                            type: 'swap',
+                            indices: [i, minIdx],
+                            array: [...arr]
+                        });
+                    }
+                }
+
+                // Aggiungi un passo finale per indicare che l'ordinamento è completo
+                steps.push({
+                    type: 'done',
+                    array: [...arr]
+                });
+
+                return { steps, sortedArray: arr };
+            };
+
+            // Insertion Sort
+            const insertionSort = () => {
+                const steps = [];
+                const arr = [...originalArrayRef.current];
+                const n = arr.length;
+
+                for (let i = 1; i < n; i++) {
+                    let key = arr[i];
+                    let j = i - 1;
+
+                    steps.push({
+                        type: 'compare',
+                        indices: [i, j >= 0 ? j : 0],
+                        array: [...arr]
+                    });
+
+                    while (j >= 0 && arr[j] > key) {
+                        arr[j + 1] = arr[j];
+                        
+                        steps.push({
+                            type: 'swap',
+                            indices: [j, j + 1],
+                            array: [...arr]
+                        });
+                        
+                        j--;
+
+                        if (j >= 0) {
+                            steps.push({
+                                type: 'compare',
+                                indices: [j, i],
+                                array: [...arr]
+                            });
+                        }
+                    }
+
+                    arr[j + 1] = key;
+                }
+
+                // Aggiungi un passo finale per indicare che l'ordinamento è completo
+                steps.push({
+                    type: 'done',
+                    array: [...arr]
+                });
+
+                return { steps, sortedArray: arr };
+            };
+
+            // Quick Sort
+            const quickSort = () => {
+                const steps = [];
+                const arr = [...originalArrayRef.current];
+
+                // Funzione helper per quick sort
+                const quickSortHelper = (arr, low, high) => {
+                    if (low < high) {
+                        const pivotIndex = partition(arr, low, high);
+                        quickSortHelper(arr, low, pivotIndex - 1);
+                        quickSortHelper(arr, pivotIndex + 1, high);
+                    }
+                };
+
+                // Funzione di partizione per quick sort
+                const partition = (arr, low, high) => {
+                    const pivot = arr[high];
+                    steps.push({
+                        type: 'pivot',
+                        index: high,
+                        array: [...arr]
+                    });
+
+                    let i = low - 1;
+
+                    for (let j = low; j < high; j++) {
+                        steps.push({
+                            type: 'compare',
+                            indices: [j, high],
+                            array: [...arr]
+                        });
+
+                        if (arr[j] < pivot) {
+                            i++;
+                            
+                            // Esegue lo scambio
+                            const temp = arr[i];
+                            arr[i] = arr[j];
+                            arr[j] = temp;
+                            
+                            steps.push({
+                                type: 'swap',
+                                indices: [i, j],
+                                array: [...arr]
+                            });
+                        }
+                    }
+
+                    // Esegue lo scambio con il pivot
+                    const temp = arr[i + 1];
+                    arr[i + 1] = arr[high];
+                    arr[high] = temp;
+                    
+                    steps.push({
+                        type: 'swap',
+                        indices: [i + 1, high],
+                        array: [...arr]
+                    });
+
+                    return i + 1;
+                };
+
+                // Avvia il quick sort
+                quickSortHelper(arr, 0, arr.length - 1);
+                
+                // Aggiungi un passo finale per indicare che l'ordinamento è completo
+                steps.push({
+                    type: 'done',
+                    array: [...arr]
+                });
+                
+                return { steps, sortedArray: arr };
+            };
+            
+            // Binary Search
+            const binarySearch = (target) => {
+                const steps = [];
+                // Se l'array non è già ordinato, dobbiamo ordinarlo prima
+                let sortedArr;
+                if (!isSorted) {
+                    // Utilizziamo l'algoritmo di ordinamento nativo di JavaScript
+                    sortedArr = [...originalArrayRef.current].sort((a, b) => a - b);
+                } else {
+                    // Se l'array è già stato ordinato in precedenza, utilizziamo quello corrente
+                    sortedArr = [...array];
+                }
+                
+                let left = 0;
+                let right = sortedArr.length - 1;
+                let found = false;
+                
+                while (left <= right) {
+                    const mid = Math.floor((left + right) / 2);
+                    
+                    steps.push({
+                        type: 'search-range',
+                        indices: [left, mid, right],
+                        array: [...sortedArr]
+                    });
+                    
+                    if (sortedArr[mid] === target) {
+                        steps.push({
+                            type: 'found',
+                            index: mid,
+                            value: sortedArr[mid],
+                            array: [...sortedArr]
+                        });
+                        found = true;
+                        break;
+                    } else if (sortedArr[mid] < target) {
+                        left = mid + 1;
+                    } else {
+                        right = mid - 1;
+                    }
+                }
+                
+                if (!found) {
+                    steps.push({
+                        type: 'not-found',
+                        array: [...sortedArr]
+                    });
+                }
+                
+                return { steps, sortedArray: sortedArr };
+            };
+
+            // Avvia l'algoritmo di ordinamento
+            const startSort = () => {
+                let result;
+
+                switch (algorithm) {
+                    case 'bubble':
+                        result = bubbleSort();
+                        break;
+                    case 'selection':
+                        result = selectionSort();
+                        break;
+                    case 'insertion':
+                        result = insertionSort();
+                        break;
+                    case 'quick':
+                        result = quickSort();
+                        break;
+                    default:
+                        result = bubbleSort();
+                }
+
+                setAnimations(result.steps);
+                sortingArrayRef.current = [...result.sortedArray];
+                setIsSorting(true);
+                setCurrentStep(0);
+                // Imposta l'array visualizzato all'array originale all'inizio dell'animazione
+                setArray([...originalArrayRef.current]);
+            };
+            
+            // Avvia la ricerca binaria
+            const startBinarySearch = () => {
+                if (!searchValue) {
+                    alert("Inserisci un valore da cercare");
+                    return;
+                }
+                
+                const value = parseInt(searchValue);
+                if (isNaN(value)) {
+                    alert("Inserisci un valore numerico valido");
+                    return;
+                }
+                
+                const result = binarySearch(value);
+                setAnimations(result.steps);
+                setArray(result.sortedArray);
+                sortingArrayRef.current = [...result.sortedArray];
+                setIsSorting(true);
+                setIsSorted(true);
+                setCurrentStep(0);
+            };
+
+            // Funzione per eseguire un passo dell'animazione
+            const executeStep = (step) => {
+                if (step >= animations.length) {
+                    setIsPlaying(false);
+                    if (playbackInterval) {
+                        clearInterval(playbackInterval);
+                        setPlaybackInterval(null);
+                    }
+                    // Se l'ultimo passo è di tipo 'done', imposta isSorted a true
+                    if (animations[animations.length - 1]?.type === 'done') {
+                        setIsSorted(true);
+                        // Imposta l'array visualizzato all'array ordinato finale
+                        setArray([...sortingArrayRef.current]);
+                    }
+                    return;
+                }
+
+                setCurrentStep(step);
+                
+                // Imposta l'array visualizzato in base allo stato attuale dell'animazione
+                const animation = animations[step];
+                if (animation && animation.array) {
+                    setArray([...animation.array]);
+                }
+            };
+
+            // Funzione per andare al passo successivo
+            const nextStep = () => {
+                if (currentStep < animations.length) {
+                    executeStep(currentStep + 1);
+                }
+            };
+
+            // Funzione per andare al passo precedente
+            const prevStep = () => {
+                if (currentStep > 0) {
+                    executeStep(currentStep - 1);
+                }
+            };
+
+            // Funzione per avviare/fermare la riproduzione automatica
+            const togglePlayback = () => {
+                if (isPlaying) {
+                    // Ferma la riproduzione
+                    if (playbackInterval) {
+                        clearInterval(playbackInterval);
+                        setPlaybackInterval(null);
+                    }
+                    setIsPlaying(false);
+                } else {
+                    // Avvia la riproduzione
+                    const interval = setInterval(() => {
+                        setCurrentStep(prev => {
+                            if (prev < animations.length - 1) {
+                                executeStep(prev + 1);
+                                return prev + 1;
+                            } else {
+                                clearInterval(interval);
+                                setPlaybackInterval(null);
+                                setIsPlaying(false);
+                                return prev;
+                            }
+                        });
+                    }, 1000 - playbackSpeed); // Inverte la velocità per renderla più intuitiva
+                    setPlaybackInterval(interval);
+                    setIsPlaying(true);
+                }
+            };
+
+            // Determina lo stile delle barre
+            const getBarStyle = (index) => {
+                if (!animations[currentStep]) return {};
+
+                const animation = animations[currentStep];
+                
+                if (animation.type === 'compare' && animation.indices.includes(index)) {
+                    return { backgroundColor: 'yellow' };
+                } else if (animation.type === 'swap' && animation.indices.includes(index)) {
+                    return { backgroundColor: 'red' };
+                } else if (animation.type === 'pivot' && animation.index === index) {
+                    return { backgroundColor: 'purple' };
+                } else if (animation.type === 'search-range') {
+                    if (index >= animation.indices[0] && index <= animation.indices[2]) {
+                        return { backgroundColor: 'lightblue' };
+                    }
+                    if (index === animation.indices[1]) {
+                        return { backgroundColor: 'blue', color: 'white' };
+                    }
+                } else if (animation.type === 'found' && animation.index === index) {
+                    return { backgroundColor: 'lime' };
+                }
+
+                // Se siamo all'ultimo passo e il tipo è 'done', colora tutte le barre di verde
+                if (animation.type === 'done') {
+                    return { backgroundColor: 'green' };
+                }
+
+                return {};
+            };
+
+            // Ottiene descrizione del passo corrente
+            const getStepDescription = () => {
+                if (!animations[currentStep]) return '';
+
+                const animation = animations[currentStep];
+                const currentArray = animation.array || array;
+                
+                if (animation.type === 'compare') {
+                    return `Confronto elementi ${currentArray[animation.indices[0]]} e ${currentArray[animation.indices[1]]}`;
+                } else if (animation.type === 'swap') {
+                    return `Scambio elementi ${currentArray[animation.indices[0]]} e ${currentArray[animation.indices[1]]}`;
+                } else if (animation.type === 'pivot') {
+                    return `Elemento pivot: ${currentArray[animation.index]}`;
+                } else if (animation.type === 'search-range') {
+                    return `Ricerca tra gli indici ${animation.indices[0]} e ${animation.indices[2]}, elemento centrale: ${currentArray[animation.indices[1]]}`;
+                } else if (animation.type === 'found') {
+                    return `Elemento ${animation.value} trovato all'indice ${animation.index}`;
+                } else if (animation.type === 'not-found') {
+                    return `Elemento non trovato nell'array`;
+                } else if (animation.type === 'done') {
+                    return `Ordinamento completato`;
+                }
+
+                return '';
+            };
+
+            return (
+                <div className="container">
+                    <h1>Visualizzazione Algoritmi di Ordinamento e Ricerca</h1>
+                    
+                    <div className="tab-controls">
+                        <div 
+                            className={`tab ${activeTab === 'sort' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('sort')}
+                        >
+                            Ordinamento
+                        </div>
+                        <div 
+                            className={`tab ${activeTab === 'search' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('search')}
+                        >
+                            Ricerca Binaria
+                        </div>
+                    </div>
+                    
+                    {activeTab === 'sort' && (
+                        <div className="controls">
+                            <select 
+                                value={algorithm} 
+                                onChange={(e) => setAlgorithm(e.target.value)}
+                                disabled={isSorting && isPlaying}
+                            >
+                                <option value="bubble">Bubble Sort</option>
+                                <option value="selection">Selection Sort</option>
+                                <option value="insertion">Insertion Sort</option>
+                                <option value="quick">Quick Sort</option>
+                            </select>
+                            
+                            <button onClick={generateArray} disabled={isSorting && isPlaying}>
+                                Nuovo Array
+                            </button>
+                            
+                            <button onClick={startSort} disabled={isSorting}>
+                                Avvia Ordinamento
+                            </button>
+                            
+                            <div className="speed-control">
+                                <span>Velocità:</span>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="900" 
+                                    value={playbackSpeed} 
+                                    onChange={(e) => setPlaybackSpeed(parseInt(e.target.value))}
+                                    disabled={!isSorting}
+                                />
+                            </div>
+                        </div>
+                    )}
+                    
+                    {activeTab === 'search' && (
+                        <div className="search-controls">
+                            <input 
+                                type="number" 
+                                placeholder="Valore" 
+                                value={searchValue} 
+                                onChange={(e) => setSearchValue(e.target.value)}
+                                disabled={isSorting && isPlaying}
+                            />
+                            
+                            <button 
+                                className="search-button" 
+                                onClick={startBinarySearch} 
+                                disabled={isSorting && isPlaying}
+                            >
+                                Avvia Ricerca Binaria
+                            </button>
+                            
+                            <button onClick={generateArray} disabled={isSorting && isPlaying}>
+                                Nuovo Array
+                            </button>
+                            
+                            <div className="speed-control">
+                                <span>Velocità:</span>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="900" 
+                                    value={playbackSpeed} 
+                                    onChange={(e) => setPlaybackSpeed(parseInt(e.target.value))}
+                                    disabled={!isSorting}
+                                />
+                            </div>
+                        </div>
+                    )}
+                    
+                    <div className="visualization">
+                        {array.map((value, idx) => (
+                            <div 
+                                key={idx} 
+                                className="bar" 
+                                style={{
+                                    height: `${value * 2}px`,
+                                    ...getBarStyle(idx)
+                                }}
+                            >
+                                <span className="bar-value">{value}</span>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {isSorting && animations.length > 0 && (
+                        <div className="step-controls">
+                            <button onClick={prevStep} disabled={currentStep <= 0 || isPlaying}>
+                                ⏪ Indietro
+                            </button>
+                            
+                            <button onClick={togglePlayback}>
+                                {isPlaying ? '⏸ Pausa' : '▶️ Riproduci'}
+                            </button>
+                            
+                            <button onClick={nextStep} disabled={currentStep >= animations.length - 1 || isPlaying}>
+                                Avanti ⏩
+                            </button>
+                            
+                            <span style={{ marginLeft: '10px' }}>
+                                Passo: {currentStep + 1} / {animations.length}
+                            </span>
+                        </div>
+                    )}
+                    
+                    {isSorting && animations[currentStep] && (
+                        <div className="info">
+                            <p><strong>Azione corrente:</strong> {getStepDescription()}</p>
+                            <div className="legend">
+                                <div className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: 'yellow' }}></div>
+                                    <span>Confronto</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: 'red' }}></div>
+                                    <span>Scambio</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: 'purple' }}></div>
+                                    <span>Pivot</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: 'lightblue' }}></div>
+                                    <span>Range ricerca</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: 'lime' }}></div>
+                                    <span>Trovato</span>
+                                </div>
+                                <div className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: 'green' }}></div>
+                                    <span>Completato</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<AlgorithmsVisualizer />, document.getElementById('root'));
+    </script>
+</body>
+</html>

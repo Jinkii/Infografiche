@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strutture Dati in Informatica</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.4/d3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #6f42c1;
+        }
+        .nav-pills .nav-link {
+            color: #6f42c1;
+        }
+        h1, h2, h3 {
+            color: #6f42c1;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table th {
+            background-color: #6f42c1;
+            color: white;
+        }
+        .complexity-table td {
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #6f42c1;
+            border-color: #6f42c1;
+        }
+        .btn-primary:hover {
+            background-color: #5a32a3;
+            border-color: #5a32a3;
+        }
+        .animation-container {
+            min-height: 300px;
+            margin: 20px 0;
+        }
+        .node circle {
+            fill: #fff;
+            stroke: #6f42c1;
+            stroke-width: 3px;
+        }
+        .node text {
+            font: 12px sans-serif;
+        }
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+        .array-box {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin: 2px;
+            line-height: 40px;
+            text-align: center;
+            border: 2px solid #6f42c1;
+            border-radius: 4px;
+        }
+        .stack-box, .queue-box {
+            width: 100%;
+            height: 40px;
+            margin: 2px;
+            line-height: 40px;
+            text-align: center;
+            border: 2px solid #6f42c1;
+            border-radius: 4px;
+        }
+        .highlight {
+            background-color: #ffc107;
+            transition: background-color 0.5s;
+        }
+        .graph-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .quiz-card {
+            border-left: 5px solid #6f42c1;
+            background-color: #f8f9fa;
+        }
+        .feedback {
+            display: none;
+            margin-top: 10px;
+        }
+        .feedback.correct {
+            color: #28a745;
+        }
+        .feedback.incorrect {
+            color: #dc3545;
+        }
+        .quiz-option {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover {
+            background-color: #f1f1f1;
+        }
+        .quiz-option.selected-correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .quiz-option.selected-incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-5">
+        <div class="row">
+            <div class="col-md-3">
+                <nav id="navbar-structures" class="h-100 flex-column align-items-stretch pe-4 border-end">
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link active" href="#intro">Introduzione</a>
+                        <a class="nav-link" href="#linear">Strutture Dati Lineari</a>
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ms-3 my-1" href="#arrays">Array</a>
+                            <a class="nav-link ms-3 my-1" href="#linkedlists">Liste Collegate</a>
+                            <a class="nav-link ms-3 my-1" href="#stacks">Stack</a>
+                            <a class="nav-link ms-3 my-1" href="#queues">Code</a>
+                        </nav>
+                        <a class="nav-link" href="#nonlinear">Strutture Dati Non Lineari</a>
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ms-3 my-1" href="#trees">Alberi</a>
+                            <a class="nav-link ms-3 my-1" href="#graphs">Grafi</a>
+                        </nav>
+                        <a class="nav-link" href="#comparison">Tabella Comparativa</a>
+                        <a class="nav-link" href="#animations">Animazioni Interattive</a>
+                        <a class="nav-link" href="#quiz">Quiz ed Esercizi</a>
+                    </nav>
+                </nav>
+            </div>
+
+            <div class="col-md-9">
+                <div data-bs-spy="scroll" data-bs-target="#navbar-structures" data-bs-offset="0" class="scrollspy-example" tabindex="0">
+                    <!-- Introduzione -->
+                    <section id="intro" class="mb-5">
+                        <h1 class="display-4 mb-4">Strutture Dati in Informatica</h1>
+                        <div class="card">
+                            <div class="card-body">
+                                <h2>Introduzione</h2>
+                                <p>Le strutture dati sono metodi di organizzazione dei dati che consentono un accesso e una modifica efficienti. Sono fondamentali per la progettazione di algoritmi efficienti e la risoluzione di problemi complessi.</p>
+                                
+                                <h3 class="mt-4">Classificazione</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h4>Strutture Dati Lineari</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>Gli elementi sono organizzati in sequenza e ogni elemento ha un predecessore e un successore (tranne il primo e l'ultimo).</p>
+                                                <ul>
+                                                    <li>Array</li>
+                                                    <li>Liste Collegate</li>
+                                                    <li>Stack</li>
+                                                    <li>Code</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h4>Strutture Dati Non Lineari</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>Gli elementi sono organizzati in modo gerarchico o a rete, con relazioni più complesse tra gli elementi.</p>
+                                                <ul>
+                                                    <li>Alberi</li>
+                                                    <li>Grafi</li>
+                                                    <li>Tabelle Hash</li>
+                                                    <li>Heap</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Strutture Dati Lineari -->
+                    <section id="linear" class="mb-5">
+                        <h2 class="mb-4">Strutture Dati Lineari</h2>
+
+                        <!-- Arrays -->
+                        <section id="arrays" class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Array</h3>
+                                    <p>Gli array sono collezioni di elementi dello stesso tipo, memorizzati in posizioni di memoria contigue e accessibili tramite indici.</p>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <h5>Vantaggi</h5>
+                                            <ul>
+                                                <li>Accesso rapido agli elementi (O(1))</li>
+                                                <li>Semplicità di implementazione</li>
+                                                <li>Efficienza in memoria</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Svantaggi</h5>
+                                            <ul>
+                                                <li>Dimensione fissa (per array statici)</li>
+                                                <li>Inserimenti e cancellazioni costosi</li>
+                                                <li>Spreco di memoria se sottoutilizzati</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-3">Complessità Operazioni</h5>
+                                    <table class="table table-bordered complexity-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Operazione</th>
+                                                <th>Complessità</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Accesso</td>
+                                                <td>O(1)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ricerca</td>
+                                                <td>O(n)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Inserimento</td>
+                                                <td>O(n)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cancellazione</td>
+                                                <td>O(n)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <div class="mt-3">
+                                        <h5>Rappresentazione</h5>
+                                        <div id="array-representation" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Liste Collegate -->
+                        <section id="linkedlists" class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Liste Collegate</h3>
+                                    <p>Le liste collegate sono sequenze di nodi, dove ogni nodo contiene dati e un riferimento al nodo successivo.</p>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Lista a Collegamento Singolo</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Ogni nodo punta solo al successivo.</p>
+                                                    <div id="singly-linked-list" class="mt-2"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Lista a Collegamento Doppio</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Ogni nodo punta sia al successivo che al precedente.</p>
+                                                    <div id="doubly-linked-list" class="mt-2"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Lista Circolare</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>L'ultimo nodo punta al primo, formando un ciclo.</p>
+                                                    <div id="circular-linked-list" class="mt-2"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-4">Complessità Operazioni</h5>
+                                    <table class="table table-bordered complexity-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Operazione</th>
+                                                <th>Lista Singola</th>
+                                                <th>Lista Doppia</th>
+                                                <th>Lista Circolare</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Accesso</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ricerca</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Inserimento (inizio)</td>
+                                                <td>O(1)</td>
+                                                <td>O(1)</td>
+                                                <td>O(1)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Inserimento (fine)</td>
+                                                <td>O(n)</td>
+                                                <td>O(1)*</td>
+                                                <td>O(1)*</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cancellazione</td>
+                                                <td>O(n)</td>
+                                                <td>O(1)*</td>
+                                                <td>O(n)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <small>* Con riferimento al nodo precedente/successivo</small>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Stack -->
+                        <section id="stacks" class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Stack (LIFO)</h3>
+                                    <p>Lo stack è una struttura dati che segue il principio LIFO (Last In, First Out), dove l'elemento inserito per ultimo è il primo ad essere rimosso.</p>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <h5>Operazioni Principali</h5>
+                                            <ul>
+                                                <li><strong>Push:</strong> Aggiunge un elemento in cima allo stack</li>
+                                                <li><strong>Pop:</strong> Rimuove l'elemento in cima allo stack</li>
+                                                <li><strong>Peek/Top:</strong> Visualizza l'elemento in cima senza rimuoverlo</li>
+                                                <li><strong>isEmpty:</strong> Controlla se lo stack è vuoto</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Applicazioni</h5>
+                                            <ul>
+                                                <li>Gestione della memoria (chiamate a funzioni)</li>
+                                                <li>Verifica di parentesi bilanciate</li>
+                                                <li>Valutazione di espressioni</li>
+                                                <li>Algoritmi di backtracking</li>
+                                                <li>Annulla/Ripeti in applicazioni</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <h5>Visualizzazione Stack</h5>
+                                        <div id="stack-viz" class="mt-2">
+                                            <div id="stack-container" style="width: 200px;"></div>
+                                            <div class="mt-2">
+                                                <button id="stack-push" class="btn btn-primary btn-sm me-2">Push</button>
+                                                <button id="stack-pop" class="btn btn-primary btn-sm">Pop</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-4">Complessità Operazioni</h5>
+                                    <table class="table table-bordered complexity-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Operazione</th>
+                                                <th>Complessità</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Push</td>
+                                                <td>O(1)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pop</td>
+                                                <td>O(1)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Peek</td>
+                                                <td>O(1)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>isEmpty</td>
+                                                <td>O(1)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Queue -->
+                        <section id="queues" class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Code (FIFO)</h3>
+                                    <p>La coda è una struttura dati che segue il principio FIFO (First In, First Out), dove l'elemento inserito per primo è il primo ad essere rimosso.</p>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Coda Standard</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h6>Operazioni Principali</h6>
+                                                    <ul>
+                                                        <li><strong>Enqueue:</strong> Aggiunge un elemento alla fine</li>
+                                                        <li><strong>Dequeue:</strong> Rimuove l'elemento dall'inizio</li>
+                                                        <li><strong>Peek/Front:</strong> Visualizza il primo elemento</li>
+                                                        <li><strong>isEmpty:</strong> Controlla se la coda è vuota</li>
+                                                    </ul>
+                                                    <div id="queue-viz" class="mt-3">
+                                                        <div id="queue-container"></div>
+                                                        <div class="mt-2">
+                                                            <button id="queue-enqueue" class="btn btn-primary btn-sm me-2">Enqueue</button>
+                                                            <button id="queue-dequeue" class="btn btn-primary btn-sm">Dequeue</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Coda a Priorità</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Una struttura dati in cui ogni elemento ha una priorità associata e gli elementi vengono serviti in base alla loro priorità.</p>
+                                                    <h6>Implementazioni</h6>
+                                                    <ul>
+                                                        <li>Array ordinato</li>
+                                                        <li>Heap binario (più efficiente)</li>
+                                                    </ul>
+                                                    <h6>Complessità (con Heap)</h6>
+                                                    <ul>
+                                                        <li>Inserimento: O(log n)</li>
+                                                        <li>Estrazione max/min: O(log n)</li>
+                                                        <li>Accesso max/min: O(1)</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-4">Applicazioni</h5>
+                                    <ul>
+                                        <li>Gestione processi nei sistemi operativi</li>
+                                        <li>Gestione buffer (stampanti, richieste web)</li>
+                                        <li>Algoritmi di attraversamento in ampiezza (BFS)</li>
+                                        <li>Simulazioni (code nei supermercati, traffico)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                    </section>
+
+                    <!-- Strutture Dati Non Lineari -->
+                    <section id="nonlinear" class="mb-5">
+                        <h2 class="mb-4">Strutture Dati Non Lineari</h2>
+
+                        <!-- Alberi -->
+                        <section id="trees" class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Alberi</h3>
+                                    <p>Gli alberi sono strutture dati gerarchiche non lineari composte da nodi collegati tra loro. Ogni albero ha un nodo radice e ogni nodo può avere zero o più nodi figli.</p>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header bg-light">
+                                                    <h5>Albero Binario di Ricerca (BST)</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Un albero binario in cui per ogni nodo, tutti i nodi nel sottoalbero sinistro hanno valori minori e tutti i nodi nel sottoalbero destro hanno valori maggiori.</p>
+                                                    
+                                                    <h6>Complessità</h6>
+                                                    <table class="table table-bordered complexity-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Operazione</th>
+                                                                <th>Media</th>
+                                                                <th>Peggior Caso</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Ricerca</td>
+                                                                <td>O(log n)</td>
+                                                                <td>O(n)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Inserimento</td>
+                                                                <td>O(log n)</td>
+                                                                <td>O(n)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Cancellazione</td>
+                                                                <td>O(log n)</td>
+                                                                <td>O(n)</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card">
+                                                <div class="card-header bg-light">
+                                                    <h5>Albero AVL</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Un BST bilanciato in cui la differenza di altezza tra i sottoalberi sinistro e destro di ogni nodo non supera 1.</p>
+                                                    <p>Mantiene una complessità O(log n) per tutte le operazioni grazie al ribilanciamento automatico.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header bg-light">
+                                                    <h5>Trie (Albero dei Prefissi)</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Struttura specializzata per la ricerca di stringhe, in cui ogni nodo rappresenta un carattere in un percorso.</p>
+                                                    <h6>Applicazioni</h6>
+                                                    <ul>
+                                                        <li>Completamento automatico</li>
+                                                        <li>Controllo ortografico</li>
+                                                        <li>Routing IP</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card">
+                                                <div class="card-header bg-light">
+                                                    <h5>Heap</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Un albero binario quasi completo in cui il valore di ogni nodo è maggiore o uguale (max-heap) o minore o uguale (min-heap) ai valori dei suoi figli.</p>
+                                                    <h6>Utilizzato per</h6>
+                                                    <ul>
+                                                        <li>Code a priorità</li>
+                                                        <li>Algoritmi di ordinamento (Heapsort)</li>
+                                                        <li>Algoritmi di selezione</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <h5>Visualizzazione Albero</h5>
+                                        <div id="tree-viz" class="animation-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Grafi -->
+                        <section id="graphs" class="mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>Grafi</h3>
+                                    <p>I grafi sono strutture che rappresentano un insieme di oggetti in cui alcuni oggetti sono collegati tra loro da collegamenti o archi.</p>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Grafo Non Diretto</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Gli archi non hanno una direzione specifica.</p>
+                                                    <div id="undirected-graph" class="graph-container"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Grafo Diretto</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Gli archi hanno una direzione specifica da un nodo all'altro.</p>
+                                                    <div id="directed-graph" class="graph-container"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card h-100">
+                                                <div class="card-header bg-light">
+                                                    <h5>Grafo Pesato</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>Gli archi hanno un peso o costo associato.</p>
+                                                    <div id="weighted-graph" class="graph-container"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-4">
+                                        <div class="col-md-6">
+                                            <h5>Rappresentazioni</h5>
+                                            <ul>
+                                                <li><strong>Matrice di Adiacenza:</strong> Array 2D dove [i][j] indica se esiste una connessione tra i nodi i e j</li>
+                                                <li><strong>Lista di Adiacenza:</strong> Array di liste dove ogni lista contiene i nodi adiacenti a un dato nodo</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Algoritmi Comuni</h5>
+                                            <ul>
+                                                <li><strong>BFS:</strong> Ricerca in ampiezza, usa una coda</li>
+                                                <li><strong>DFS:</strong> Ricerca in profondità, usa uno stack</li>
+                                                <li><strong>Dijkstra:</strong> Trova il percorso più breve</li>
+                                                <li><strong>Kruskal/Prim:</strong> Albero di copertura minimo</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-4">Applicazioni</h5>
+                                    <ul>
+                                        <li>Reti sociali</li>
+                                        <li>Navigazione GPS</li>
+                                        <li>Routing di rete</li>
+                                        <li>Motori di ricerca</li>
+                                        <li>Sistemi di raccomandazione</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                    </section>
+
+                    <!-- Tabella Comparativa -->
+                    <section id="comparison" class="mb-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2>Tabella Comparativa</h2>
+                                <p>Confronto delle diverse strutture dati per complessità di operazioni e utilizzi comuni.</p>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-bordered complexity-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Struttura Dati</th>
+                                                <th>Accesso</th>
+                                                <th>Ricerca</th>
+                                                <th>Inserimento</th>
+                                                <th>Cancellazione</th>
+                                                <th>Utilizzi Tipici</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Array</td>
+                                                <td>O(1)</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>Dati sequenziali con accesso frequente</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Lista Collegata</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(1)*</td>
+                                                <td>O(1)*</td>
+                                                <td>Inserimenti/cancellazioni frequenti</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Stack</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(1)</td>
+                                                <td>O(1)</td>
+                                                <td>LIFO, backtracking, parsing</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Coda</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(1)</td>
+                                                <td>O(1)</td>
+                                                <td>FIFO, buffer, BFS</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Coda a Priorità</td>
+                                                <td>O(n)</td>
+                                                <td>O(n)</td>
+                                                <td>O(log n)</td>
+                                                <td>O(log n)</td>
+                                                <td>Schedulazione, Dijkstra</td>
+                                            </tr>
+                                            <tr>
+                                                <td>BST</td>
+                                                <td>O(log n)**</td>
+                                                <td>O(log n)**</td>
+                                                <td>O(log n)**</td>
+                                                <td>O(log n)**</td>
+                                                <td>Ricerca ordinata, database</td>
+                                            </tr>
+                                            <tr>
+                                                <td>AVL</td>
+                                                <td>O(log n)</td>
+                                                <td>O(log n)</td>
+                                                <td>O(log n)</td>
+                                                <td>O(log n)</td>
+                                                <td>Ricerca con garanzia di prestazioni</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Heap</td>
+                                                <td>O(1)***</td>
+                                                <td>O(n)</td>
+                                                <td>O(log n)</td>
+                                                <td>O(log n)</td>
+                                                <td>Priority queue, Heapsort</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Grafo</td>
+                                                <td>O(1)****</td>
+                                                <td>O(V+E)</td>
+                                                <td>Variabile</td>
+                                                <td>Variabile</td>
+                                                <td>Reti, percorsi, relazioni</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small>
+                                    * Con riferimento al punto di inserimento/cancellazione<br>
+                                    ** Nel caso medio, O(n) nel caso peggiore<br>
+                                    *** Solo per max/min<br>
+                                    **** Con matrice di adiacenza
+                                </small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Animazioni Interattive -->
+                    <section id="animations" class="mb-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2>Animazioni Interattive</h2>
+                                <p>Seleziona una struttura dati per visualizzare le sue operazioni in modo interattivo.</p>
+                                
+                                <div class="nav nav-pills mb-3" id="animation-tabs" role="tablist">
+                                    <button class="nav-link active" id="anim-bst-tab" data-bs-toggle="pill" data-bs-target="#anim-bst" type="button" role="tab">BST</button>
+                                    <button class="nav-link" id="anim-stack-tab" data-bs-toggle="pill" data-bs-target="#anim-stack" type="button" role="tab">Stack</button>
+                                    <button class="nav-link" id="anim-queue-tab" data-bs-toggle="pill" data-bs-target="#anim-queue" type="button" role="tab">Queue</button>
+                                    <button class="nav-link" id="anim-graph-tab" data-bs-toggle="pill" data-bs-target="#anim-graph" type="button" role="tab">Grafo</button>
+                                </div>
+                                
+                                <div class="tab-content" id="animation-tab-content">
+                                    <div class="tab-pane fade show active" id="anim-bst" role="tabpanel">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h4>Albero Binario di Ricerca</h4>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div id="bst-animation" class="animation-container"></div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="bst-value" class="form-label">Valore</label>
+                                                            <input type="number" class="form-control" id="bst-value" min="1" max="99" value="50">
+                                                        </div>
+                                                        <div class="d-grid gap-2">
+                                                            <button id="bst-insert" class="btn btn-primary mb-2">Inserisci</button>
+                                                            <button id="bst-search" class="btn btn-primary mb-2">Cerca</button>
+                                                            <button id="bst-delete" class="btn btn-primary mb-2">Cancella</button>
+                                                            <button id="bst-reset" class="btn btn-secondary">Reset</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="tab-pane fade" id="anim-stack" role="tabpanel">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h4>Stack (LIFO)</h4>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div id="stack-animation" class="animation-container"></div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="stack-value" class="form-label">Valore</label>
+                                                            <input type="text" class="form-control" id="stack-value" value="A">
+                                                        </div>
+                                                        <div class="d-grid gap-2">
+                                                            <button id="stack-anim-push" class="btn btn-primary mb-2">Push</button>
+                                                            <button id="stack-anim-pop" class="btn btn-primary mb-2">Pop</button>
+                                                            <button id="stack-anim-peek" class="btn btn-primary mb-2">Peek</button>
+                                                            <button id="stack-anim-reset" class="btn btn-secondary">Reset</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="tab-pane fade" id="anim-queue" role="tabpanel">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h4>Coda (FIFO)</h4>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div id="queue-animation" class="animation-container"></div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="queue-value" class="form-label">Valore</label>
+                                                            <input type="text" class="form-control" id="queue-value" value="A">
+                                                        </div>
+                                                        <div class="d-grid gap-2">
+                                                            <button id="queue-anim-enqueue" class="btn btn-primary mb-2">Enqueue</button>
+                                                            <button id="queue-anim-dequeue" class="btn btn-primary mb-2">Dequeue</button>
+                                                            <button id="queue-anim-peek" class="btn btn-primary mb-2">Peek</button>
+                                                            <button id="queue-anim-reset" class="btn btn-secondary">Reset</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="tab-pane fade" id="anim-graph" role="tabpanel">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h4>Algoritmi su Grafi</h4>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div id="graph-animation" class="animation-container"></div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label for="graph-start-node" class="form-label">Nodo Iniziale</label>
+                                                            <select class="form-select" id="graph-start-node">
+                                                                <option value="A">A</option>
+                                                                <option value="B">B</option>
+                                                                <option value="C">C</option>
+                                                                <option value="D">D</option>
+                                                                <option value="E">E</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="d-grid gap-2">
+                                                            <button id="graph-anim-bfs" class="btn btn-primary mb-2">BFS</button>
+                                                            <button id="graph-anim-dfs" class="btn btn-primary mb-2">DFS</button>
+                                                            <button id="graph-anim-shortest" class="btn btn-primary mb-2">Percorso più breve</button>
+                                                            <button id="graph-anim-reset" class="btn btn-secondary">Reset</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Quiz ed Esercizi -->
+                    <section id="quiz">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2>Quiz ed Esercizi</h2>
+                                <p>Metti alla prova la tua conoscenza sulle strutture dati.</p>
+                                
+                                <div id="quiz-container">
+                                    <div class="quiz-card p-4 mb-4">
+                                        <h5>1. Quale struttura dati sceglieresti per implementare il meccanismo "Undo" in un editor di testo?</h5>
+                                        <div class="mt-3">
+                                            <div class="quiz-option" data-correct="true">
+                                                <strong>A.</strong> Stack
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>B.</strong> Queue
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>C.</strong> Binary Search Tree
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>D.</strong> Heap
+                                            </div>
+                                        </div>
+                                        <div class="feedback correct">
+                                            <i class="bi bi-check-circle"></i> Corretto! Lo Stack è perfetto per il comando Undo perché segue il principio LIFO (Last In, First Out). L'ultima azione eseguita è la prima ad essere annullata.
+                                        </div>
+                                        <div class="feedback incorrect">
+                                            <i class="bi bi-x-circle"></i> Non è corretto. Lo Stack sarebbe la scelta migliore grazie al principio LIFO.
+                                        </div>
+                                    </div>
+
+                                    <div class="quiz-card p-4 mb-4">
+                                        <h5>2. Quale struttura dati useresti per implementare un sistema di gestione delle code in un ufficio?</h5>
+                                        <div class="mt-3">
+                                            <div class="quiz-option">
+                                                <strong>A.</strong> Stack
+                                            </div>
+                                            <div class="quiz-option" data-correct="true">
+                                                <strong>B.</strong> Queue
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>C.</strong> Linked List
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>D.</strong> Array
+                                            </div>
+                                        </div>
+                                        <div class="feedback correct">
+                                            <i class="bi bi-check-circle"></i> Corretto! La Coda è la struttura ideale poiché segue il principio FIFO (First In, First Out). Il primo cliente che arriva è il primo ad essere servito.
+                                        </div>
+                                        <div class="feedback incorrect">
+                                            <i class="bi bi-x-circle"></i> Non è corretto. La Coda (Queue) sarebbe la scelta migliore perché segue il principio FIFO.
+                                        </div>
+                                    </div>
+
+                                    <div class="quiz-card p-4 mb-4">
+                                        <h5>3. Quale struttura dati sceglieresti per implementare un dizionario con ricerca efficiente?</h5>
+                                        <div class="mt-3">
+                                            <div class="quiz-option">
+                                                <strong>A.</strong> Stack
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>B.</strong> Array
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>C.</strong> Binary Search Tree
+                                            </div>
+                                            <div class="quiz-option" data-correct="true">
+                                                <strong>D.</strong> Trie
+                                            </div>
+                                        </div>
+                                        <div class="feedback correct">
+                                            <i class="bi bi-check-circle"></i> Corretto! Il Trie (Albero dei Prefissi) è ottimale per implementare un dizionario poiché consente ricerche efficienti di parole e supporta funzionalità come il completamento automatico.
+                                        </div>
+                                        <div class="feedback incorrect">
+                                            <i class="bi bi-x-circle"></i> Non è corretto. Il Trie (Albero dei Prefissi) sarebbe ideale per un dizionario perché ottimizza la ricerca e il completamento di parole.
+                                        </div>
+                                    </div>
+
+                                    <div class="quiz-card p-4 mb-4">
+                                        <h5>4. Quale struttura dati useresti per rappresentare la rete stradale di una città per un'app di navigazione?</h5>
+                                        <div class="mt-3">
+                                            <div class="quiz-option">
+                                                <strong>A.</strong> Linked List
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>B.</strong> Tree
+                                            </div>
+                                            <div class="quiz-option" data-correct="true">
+                                                <strong>C.</strong> Weighted Graph
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>D.</strong> Queue
+                                            </div>
+                                        </div>
+                                        <div class="feedback correct">
+                                            <i class="bi bi-check-circle"></i> Corretto! Un Grafo Pesato è perfetto per rappresentare strade (archi) e incroci (nodi), con i pesi che possono rappresentare distanze o tempi di percorrenza.
+                                        </div>
+                                        <div class="feedback incorrect">
+                                            <i class="bi bi-x-circle"></i> Non è corretto. Un Grafo Pesato sarebbe ideale per rappresentare la rete stradale con incroci (nodi) e strade (archi).
+                                        </div>
+                                    </div>
+
+                                    <div class="quiz-card p-4 mb-4">
+                                        <h5>5. Quale struttura dati è migliore per implementare un sistema di gestione delle emergenze ospedaliere, dove i pazienti devono essere trattati in base alla gravità?</h5>
+                                        <div class="mt-3">
+                                            <div class="quiz-option">
+                                                <strong>A.</strong> Stack
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>B.</strong> Queue
+                                            </div>
+                                            <div class="quiz-option" data-correct="true">
+                                                <strong>C.</strong> Priority Queue
+                                            </div>
+                                            <div class="quiz-option">
+                                                <strong>D.</strong> Linked List
+                                            </div>
+                                        </div>
+                                        <div class="feedback correct">
+                                            <i class="bi bi-check-circle"></i> Corretto! Una Coda a Priorità è ideale perché i pazienti vengono serviti in base alla gravità (priorità) piuttosto che in base all'ordine di arrivo.
+                                        </div>
+                                        <div class="feedback incorrect">
+                                            <i class="bi bi-x-circle"></i> Non è corretto. Una Coda a Priorità sarebbe la scelta migliore poiché i pazienti dovrebbero essere trattati in base alla gravità delle loro condizioni.
+                                        </div>
+                                    </div>
+
+                                    <button id="check-answers" class="btn btn-primary">Verifica Risposte</button>
+                                    <button id="reset-quiz" class="btn btn-secondary ms-2">Ricomincia</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inizializzazione Bootstrap scrollspy
+            var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+                target: '#navbar-structures'
+            });
+
+            // Array Representation
+            function createArrayRepresentation() {
+                const container = document.getElementById('array-representation');
+                container.innerHTML = '';
+                
+                for (let i = 0; i < 10; i++) {
+                    const box = document.createElement('div');
+                    box.className = 'array-box';
+                    box.textContent = Math.floor(Math.random() * 100);
+                    box.id = `array-box-${i}`;
+                    container.appendChild(box);
+                }
+            }
+            createArrayRepresentation();
+
+            // Stack Visualization
+            const stackContainer = document.getElementById('stack-container');
+            const stackData = [];
+
+            function updateStackVisualization() {
+                stackContainer.innerHTML = '';
+                
+                if (stackData.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'alert alert-secondary';
+                    emptyMsg.textContent = 'Stack vuoto';
+                    stackContainer.appendChild(emptyMsg);
+                    return;
+                }
+                
+                for (let i = stackData.length - 1; i >= 0; i--) {
+                    const box = document.createElement('div');
+                    box.className = i === stackData.length - 1 ? 'stack-box highlight' : 'stack-box';
+                    box.textContent = stackData[i];
+                    stackContainer.appendChild(box);
+                }
+            }
+
+            document.getElementById('stack-push').addEventListener('click', function() {
+                if (stackData.length < 5) {
+                    const value = String.fromCharCode(65 + stackData.length);
+                    stackData.push(value);
+                    updateStackVisualization();
+                }
+            });
+
+            document.getElementById('stack-pop').addEventListener('click', function() {
+                if (stackData.length > 0) {
+                    stackData.pop();
+                    updateStackVisualization();
+                }
+            });
+
+            updateStackVisualization();
+
+            // Queue Visualization
+            const queueContainer = document.getElementById('queue-container');
+            const queueData = [];
+
+            function updateQueueVisualization() {
+                queueContainer.innerHTML = '';
+                
+                if (queueData.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'alert alert-secondary';
+                    emptyMsg.textContent = 'Coda vuota';
+                    queueContainer.appendChild(emptyMsg);
+                    return;
+                }
+                
+                for (let i = 0; i < queueData.length; i++) {
+                    const box = document.createElement('div');
+                    box.className = i === 0 ? 'queue-box highlight' : 'queue-box';
+                    box.textContent = queueData[i];
+                    queueContainer.appendChild(box);
+                }
+            }
+
+            document.getElementById('queue-enqueue').addEventListener('click', function() {
+                if (queueData.length < 5) {
+                    const value = String.fromCharCode(65 + queueData.length);
+                    queueData.push(value);
+                    updateQueueVisualization();
+                }
+            });
+
+            document.getElementById('queue-dequeue').addEventListener('click', function() {
+                if (queueData.length > 0) {
+                    queueData.shift();
+                    updateQueueVisualization();
+                }
+            });
+
+            updateQueueVisualization();
+
+            // Tree Visualization
+            const treeViz = document.getElementById('tree-viz');
+            
+            // Sample tree data
+            const treeData = {
+                name: "50",
+                children: [
+                    {
+                        name: "30",
+                        children: [
+                            { name: "20" },
+                            { name: "40" }
+                        ]
+                    },
+                    {
+                        name: "70",
+                        children: [
+                            { name: "60" },
+                            { name: "80" }
+                        ]
+                    }
+                ]
+            };
+
+            // Create a simple tree visualization
+            const treeWidth = treeViz.clientWidth;
+            const treeHeight = 250;
+            
+            const treeSvg = d3.select("#tree-viz")
+                .append("svg")
+                .attr("width", treeWidth)
+                .attr("height", treeHeight);
+                
+            const g = treeSvg.append("g")
+                .attr("transform", `translate(${treeWidth / 2 - 50},20)`);
+                
+            const treeLayout = d3.tree().size([200, 200]);
+            const root = d3.hierarchy(treeData);
+            treeLayout(root);
+            
+            // Links
+            g.selectAll(".link")
+                .data(root.links())
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", d3.linkVertical()
+                    .x(d => d.x)
+                    .y(d => d.y));
+                
+            // Nodes
+            const node = g.selectAll(".node")
+                .data(root.descendants())
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+                
+            // Node circles
+            node.append("circle")
+                .attr("r", 20);
+                
+            // Node labels
+            node.append("text")
+                .attr("dy", ".35em")
+                .attr("text-anchor", "middle")
+                .text(d => d.data.name);
+
+            // Graph Visualizations
+            function createGraphVisualization(containerId, directed, weighted) {
+                const width = document.getElementById(containerId).clientWidth;
+                const height = document.getElementById(containerId).clientHeight;
+                
+                const svg = d3.select(`#${containerId}`)
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+                
+                // Nodes data
+                const nodes = [
+                    { id: 0, name: "A", x: width * 0.5, y: height * 0.2 },
+                    { id: 1, name: "B", x: width * 0.2, y: height * 0.5 },
+                    { id: 2, name: "C", x: width * 0.8, y: height * 0.5 },
+                    { id: 3, name: "D", x: width * 0.35, y: height * 0.8 },
+                    { id: 4, name: "E", x: width * 0.65, y: height * 0.8 }
+                ];
+                
+                // Links data
+                const links = [
+                    { source: 0, target: 1, weight: 5 },
+                    { source: 0, target: 2, weight: 3 },
+                    { source: 1, target: 3, weight: 2 },
+                    { source: 2, target: 4, weight: 4 },
+                    { source: 3, target: 4, weight: 6 }
+                ];
+                
+                // Draw links
+                if (directed) {
+                    svg.append("defs").selectAll("marker")
+                        .data(["end"])
+                        .enter().append("marker")
+                        .attr("id", "arrow")
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 20)
+                        .attr("refY", 0)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", "M0,-5L10,0L0,5");
+                }
+                
+                const linkGroup = svg.append("g").selectAll("line")
+                    .data(links)
+                    .enter().append("line")
+                    .attr("x1", d => nodes[d.source].x)
+                    .attr("y1", d => nodes[d.source].y)
+                    .attr("x2", d => nodes[d.target].x)
+                    .attr("y2", d => nodes[d.target].y)
+                    .attr("stroke", "#6f42c1")
+                    .attr("stroke-width", 2);
+                    
+                if (directed) {
+                    linkGroup.attr("marker-end", "url(#arrow)");
+                }
+                
+                // Add weights if weighted
+                if (weighted) {
+                    svg.append("g").selectAll("text")
+                        .data(links)
+                        .enter().append("text")
+                        .attr("x", d => (nodes[d.source].x + nodes[d.target].x) / 2)
+                        .attr("y", d => (nodes[d.source].y + nodes[d.target].y) / 2 - 5)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#333")
+                        .attr("font-weight", "bold")
+                        .text(d => d.weight);
+                }
+                
+                // Draw nodes
+                const nodeGroup = svg.append("g").selectAll("circle")
+                    .data(nodes)
+                    .enter().append("circle")
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y)
+                    .attr("r", 15)
+                    .attr("fill", "#fff")
+                    .attr("stroke", "#6f42c1")
+                    .attr("stroke-width", 2);
+                    
+                // Add node labels
+                svg.append("g").selectAll("text")
+                    .data(nodes)
+                    .enter().append("text")
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y + 5)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "#333")
+                    .text(d => d.name);
+            }
+            
+            createGraphVisualization('undirected-graph', false, false);
+            createGraphVisualization('directed-graph', true, false);
+            createGraphVisualization('weighted-graph', true, true);
+            
+            // BST Animation
+            const bstAnimation = document.getElementById('bst-animation');
+            let bstRoot = null;
+            let bstSvg = null;
+            
+            function initBSTAnimation() {
+                bstAnimation.innerHTML = '';
+                
+                const width = bstAnimation.clientWidth;
+                const height = 300;
+                
+                bstSvg = d3.select("#bst-animation")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+                    
+                // Initial tree
+                bstRoot = {
+                    value: 50,
+                    x: width / 2,
+                    y: 40,
+                    left: null,
+                    right: null
+                };
+                
+                // Add some initial nodes
+                insertBSTNode(bstRoot, 30);
+                insertBSTNode(bstRoot, 70);
+                insertBSTNode(bstRoot, 20);
+                insertBSTNode(bstRoot, 40);
+                insertBSTNode(bstRoot, 60);
+                insertBSTNode(bstRoot, 80);
+                
+                drawBST();
+            }
+            
+            function insertBSTNode(node, value) {
+                if (value < node.value) {
+                    if (node.left === null) {
+                        node.left = { value: value, x: 0, y: 0, left: null, right: null };
+                    } else {
+                        insertBSTNode(node.left, value);
+                    }
+                } else {
+                    if (node.right === null) {
+                        node.right = { value: value, x: 0, y: 0, left: null, right: null };
+                    } else {
+                        insertBSTNode(node.right, value);
+                    }
+                }
+            }
+            
+            function calculateBSTNodePositions(node, x, y, level, width) {
+                if (!node) return;
+                
+                // Update position
+                node.x = x;
+                node.y = y;
+                
+                const offset = width / Math.pow(2, level + 2);
+                
+                // Calculate children positions
+                calculateBSTNodePositions(node.left, x - offset, y + 60, level + 1, width);
+                calculateBSTNodePositions(node.right, x + offset, y + 60, level + 1, width);
+            }
+            
+            function drawBST() {
+                if (!bstRoot) return;
+                
+                bstSvg.selectAll("*").remove();
+                
+                // Calculate positions
+                calculateBSTNodePositions(bstRoot, bstSvg.attr("width") / 2, 40, 0, bstSvg.attr("width"));
+                
+                // Draw edges
+                function drawEdges(node) {
+                    if (!node) return;
+                    
+                    if (node.left) {
+                        bstSvg.append("line")
+                            .attr("x1", node.x)
+                            .attr("y1", node.y)
+                            .attr("x2", node.left.x)
+                            .attr("y2", node.left.y)
+                            .attr("stroke", "#6f42c1")
+                            .attr("stroke-width", 2);
+                        
+                        drawEdges(node.left);
+                    }
+                    
+                    if (node.right) {
+                        bstSvg.append("line")
+                            .attr("x1", node.x)
+                            .attr("y1", node.y)
+                            .attr("x2", node.right.x)
+                            .attr("y2", node.right.y)
+                            .attr("stroke", "#6f42c1")
+                            .attr("stroke-width", 2);
+                        
+                        drawEdges(node.right);
+                    }
+                }
+                
+                drawEdges(bstRoot);
+                
+                // Draw nodes
+                function drawNodes(node) {
+                    if (!node) return;
+                    
+                    bstSvg.append("circle")
+                        .attr("cx", node.x)
+                        .attr("cy", node.y)
+                        .attr("r", 18)
+                        .attr("fill", "#fff")
+                        .attr("stroke", "#6f42c1")
+                        .attr("stroke-width", 2);
+                        
+                    bstSvg.append("text")
+                        .attr("x", node.x)
+                        .attr("y", node.y + 5)
+                        .attr("text-anchor", "middle")
+                        .text(node.value);
+                        
+                    drawNodes(node.left);
+                    drawNodes(node.right);
+                }
+                
+                drawNodes(bstRoot);
+            }
+            
+            document.getElementById('bst-insert').addEventListener('click', function() {
+                const value = parseInt(document.getElementById('bst-value').value);
+                if (isNaN(value) || value < 1 || value > 99) return;
+                
+                insertBSTNode(bstRoot, value);
+                drawBST();
+                
+                document.getElementById('bst-value').value = Math.floor(Math.random() * 99) + 1;
+            });
+            
+            document.getElementById('bst-search').addEventListener('click', function() {
+                const value = parseInt(document.getElementById('bst-value').value);
+                if (isNaN(value)) return;
+                
+                // Highlight search path
+                function searchAndHighlight(node, value) {
+                    if (!node) return;
+                    
+                    // Highlight current node
+                    const circle = bstSvg.append("circle")
+                        .attr("cx", node.x)
+                        .attr("cy", node.y)
+                        .attr("r", 18)
+                        .attr("fill", "#ffc107")
+                        .attr("stroke", "#6f42c1")
+                        .attr("stroke-width", 2);
+                        
+                    // Wait and continue search
+                    setTimeout(() => {
+                        if (node.value === value) {
+                            // Found - keep highlighted
+                            circle.attr("fill", "#28a745");
+                        } else {
+                            // Restore color
+                            circle.attr("fill", "#fff");
+                            
+                            if (value < node.value) {
+                                searchAndHighlight(node.left, value);
+                            } else {
+                                searchAndHighlight(node.right, value);
+                            }
+                        }
+                    }, 500);
+                }
+                
+                searchAndHighlight(bstRoot, value);
+            });
+            
+            document.getElementById('bst-delete').addEventListener('click', function() {
+                const value = parseInt(document.getElementById('bst-value').value);
+                if (isNaN(value)) return;
+                
+                function deleteBSTNode(root, value) {
+                    if (!root) return null;
+                    
+                    if (value < root.value) {
+                        root.left = deleteBSTNode(root.left, value);
+                    } else if (value > root.value) {
+                        root.right = deleteBSTNode(root.right, value);
+                    } else {
+                        // Node with only one child or no child
+                        if (!root.left) {
+                            return root.right;
+                        } else if (!root.right) {
+                            return root.left;
+                        }
+                        
+                        // Node with two children
+                        // Get the inorder successor (smallest in the right subtree)
+                        root.value = findMinValue(root.right);
+                        
+                        // Delete the inorder successor
+                        root.right = deleteBSTNode(root.right, root.value);
+                    }
+                    
+                    return root;
+                }
+                
+                function findMinValue(node) {
+                    let minValue = node.value;
+                    while (node.left) {
+                        minValue = node.left.value;
+                        node = node.left;
+                    }
+                    return minValue;
+                }
+                
+                if (bstRoot.value === value && !bstRoot.left && !bstRoot.right) {
+                    alert("Cannot delete the only node in the tree");
+                    return;
+                }
+                
+                bstRoot = deleteBSTNode(bstRoot, value);
+                drawBST();
+                
+                document.getElementById('bst-value').value = Math.floor(Math.random() * 99) + 1;
+            });
+            
+            document.getElementById('bst-reset').addEventListener('click', initBSTAnimation);
+            
+            initBSTAnimation();
+            
+            // Stack Animation
+            const stackAnimation = document.getElementById('stack-animation');
+            const stackAnimData = [];
+            
+            function initStackAnimation() {
+                stackAnimation.innerHTML = '';
+                stackAnimData.length = 0;
+                
+                const width = stackAnimation.clientWidth;
+                const height = 300;
+                
+                d3.select("#stack-animation")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+                    
+                updateStackAnimation();
+            }
+            
+            function updateStackAnimation() {
+                const svg = d3.select("#stack-animation svg");
+                const width = parseInt(svg.attr("width"));
+                
+                svg.selectAll("*").remove();
+                
+                if (stackAnimData.length === 0) {
+                    svg.append("text")
+                        .attr("x", width / 2)
+                        .attr("y", 150)
+                        .attr("text-anchor", "middle")
+                        .text("Stack vuoto");
+                    return;
+                }
+                
+                const boxHeight = 40;
+                const boxWidth = 200;
+                const x = (width - boxWidth) / 2;
+                
+                // Draw stack boxes
+                svg.selectAll("rect")
+                    .data(stackAnimData)
+                    .enter()
+                    .append("rect")
+                    .attr("x", x)
+                    .attr("y", (d, i) => 200 - (i + 1) * boxHeight)
+                    .attr("width", boxWidth)
+                    .attr("height", boxHeight - 2)
+                    .attr("fill", (d, i) => i === stackAnimData.length - 1 ? "#ffc107" : "#fff")
+                    .attr("stroke", "#6f42c1")
+                    .attr("stroke-width", 2);
+                    
+                // Add text
+                svg.selectAll("text")
+                    .data(stackAnimData)
+                    .enter()
+                    .append("text")
+                    .attr("x", x + boxWidth / 2)
+                    .attr("y", (d, i) => 200 - (i + 1) * boxHeight + 25)
+                    .attr("text-anchor", "middle")
+                    .text(d => d);
+                    
+                // Label top
+                if (stackAnimData.length > 0) {
+                    svg.append("text")
+                        .attr("x", x + boxWidth + 10)
+                        .attr("y", 200 - stackAnimData.length * boxHeight + 20)
+                        .attr("fill", "#6f42c1")
+                        .text("← Top");
+                }
+            }
+            
+            document.getElementById('stack-anim-push').addEventListener('click', function() {
+                if (stackAnimData.length < 6) {
+                    const value = document.getElementById('stack-value').value || 'A';
+                    stackAnimData.push(value);
+                    updateStackAnimation();
+                    
+                    // Update input to next letter
+                    const nextChar = String.fromCharCode(value.charCodeAt(0) + 1);
+                    document.getElementById('stack-value').value = nextChar;
+                }
+            });
+            
+            document.getElementById('stack-anim-pop').addEventListener('click', function() {
+                if (stackAnimData.length > 0) {
+                    const popped = stackAnimData.pop();
+                    updateStackAnimation();
+                    
+                    // Show popped value
+                    const svg = d3.select("#stack-animation svg");
+                    svg.append("text")
+                        .attr("x", svg.attr("width") / 2)
+                        .attr("y", 250)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#dc3545")
+                        .text(`Popped: ${popped}`);
+                }
+            });
+            
+            document.getElementById('stack-anim-peek').addEventListener('click', function() {
+                if (stackAnimData.length > 0) {
+                    const svg = d3.select("#stack-animation svg");
+                    svg.append("text")
+                        .attr("x", svg.attr("width") / 2)
+                        .attr("y", 250)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#28a745")
+                        .text(`Peek: ${stackAnimData[stackAnimData.length - 1]}`);
+                }
+            });
+            
+            document.getElementById('stack-anim-reset').addEventListener('click', initStackAnimation);
+            
+            initStackAnimation();
+            
+            // Queue Animation
+            const queueAnimation = document.getElementById('queue-animation');
+            const queueAnimData = [];
+            
+            function initQueueAnimation() {
+                queueAnimation.innerHTML = '';
+                queueAnimData.length = 0;
+                
+                const width = queueAnimation.clientWidth;
+                const height = 300;
+                
+                d3.select("#queue-animation")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+                    
+                updateQueueAnimation();
+            }
+            
+            function updateQueueAnimation() {
+                const svg = d3.select("#queue-animation svg");
+                const width = parseInt(svg.attr("width"));
+                
+                svg.selectAll("*").remove();
+                
+                if (queueAnimData.length === 0) {
+                    svg.append("text")
+                        .attr("x", width / 2)
+                        .attr("y", 150)
+                        .attr("text-anchor", "middle")
+                        .text("Coda vuota");
+                    return;
+                }
+                
+                const boxHeight = 40;
+                const boxWidth = 50;
+                const x = (width - queueAnimData.length * boxWidth) / 2;
+                
+                // Draw queue boxes
+                svg.selectAll("rect")
+                    .data(queueAnimData)
+                    .enter()
+                    .append("rect")
+                    .attr("x", (d, i) => x + i * boxWidth)
+                    .attr("y", 150 - boxHeight / 2)
+                    .attr("width", boxWidth - 2)
+                    .attr("height", boxHeight)
+                    .attr("fill", (d, i) => i === 0 ? "#ffc107" : "#fff")
+                    .attr("stroke", "#6f42c1")
+                    .attr("stroke-width", 2);
+                    
+                // Add text
+                svg.selectAll("text.value")
+                    .data(queueAnimData)
+                    .enter()
+                    .append("text")
+                    .attr("class", "value")
+                    .attr("x", (d, i) => x + i * boxWidth + boxWidth / 2)
+                    .attr("y", 155)
+                    .attr("text-anchor", "middle")
+                    .text(d => d);
+                    
+                // Label front and rear
+                if (queueAnimData.length > 0) {
+                    svg.append("text")
+                        .attr("x", x + boxWidth / 2)
+                        .attr("y", 130)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#6f42c1")
+                        .text("Front");
+                        
+                    svg.append("text")
+                        .attr("x", x + (queueAnimData.length - 1) * boxWidth + boxWidth / 2)
+                        .attr("y", 130)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#6f42c1")
+                        .text("Rear");
+                        
+                    // Arrows
+                    svg.append("path")
+                        .attr("d", `M ${x + boxWidth / 2} 135 L ${x + boxWidth / 2} 145`)
+                        .attr("stroke", "#6f42c1")
+                        .attr("stroke-width", 2)
+                        .attr("marker-end", "url(#arrow)");
+                        
+                    svg.append("path")
+                        .attr("d", `M ${x + (queueAnimData.length - 1) * boxWidth + boxWidth / 2} 135 L ${x + (queueAnimData.length - 1) * boxWidth + boxWidth / 2} 145`)
+                        .attr("stroke", "#6f42c1")
+                        .attr("stroke-width", 2)
+                        .attr("marker-end", "url(#arrow)");
+                }
+            }
+            
+            document.getElementById('queue-anim-enqueue').addEventListener('click', function() {
+                if (queueAnimData.length < 8) {
+                    const value = document.getElementById('queue-value').value || 'A';
+                    queueAnimData.push(value);
+                    updateQueueAnimation();
+                    
+                    // Update input to next letter
+                    const nextChar = String.fromCharCode(value.charCodeAt(0) + 1);
+                    document.getElementById('queue-value').value = nextChar;
+                }
+            });
+            
+            document.getElementById('queue-anim-dequeue').addEventListener('click', function() {
+                if (queueAnimData.length > 0) {
+                    const dequeued = queueAnimData.shift();
+                    updateQueueAnimation();
+                    
+                    // Show dequeued value
+                    const svg = d3.select("#queue-animation svg");
+                    svg.append("text")
+                        .attr("x", svg.attr("width") / 2)
+                        .attr("y", 230)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#dc3545")
+                        .text(`Dequeued: ${dequeued}`);
+                }
+            });
+            
+            document.getElementById('queue-anim-peek').addEventListener('click', function() {
+                if (queueAnimData.length > 0) {
+                    const svg = d3.select("#queue-animation svg");
+                    svg.append("text")
+                        .attr("x", svg.attr("width") / 2)
+                        .attr("y", 230)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#28a745")
+                        .text(`Peek: ${queueAnimData[0]}`);
+                }
+            });
+            
+            document.getElementById('queue-anim-reset').addEventListener('click', initQueueAnimation);
+            
+            initQueueAnimation();
+            
+            // Graph Animation
+            const graphAnimation = document.getElementById('graph-animation');
+            
+            function initGraphAnimation() {
+                graphAnimation.innerHTML = '';
+                
+                const width = graphAnimation.clientWidth;
+                const height = 300;
+                
+                const svg = d3.select("#graph-animation")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+                    
+                // Create arrow marker for directed edges
+                svg.append("defs").append("marker")
+                    .attr("id", "graph-arrow")
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 20)
+                    .attr("refY", 0)
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", "M0,-5L10,0L0,5")
+                    .attr("fill", "#6f42c1");
+                    
+                // Graph data
+                const nodes = [
+                    { id: "A", x: width * 0.5, y: height * 0.2 },
+                    { id: "B", x: width * 0.2, y: height * 0.4 },
+                    { id: "C", x: width * 0.8, y: height * 0.4 },
+                    { id: "D", x: width * 0.3, y: height * 0.7 },
+                    { id: "E", x: width * 0.7, y: height * 0.7 }
+                ];
+                
+                const links = [
+                    { source: "A", target: "B", weight: 3 },
+                    { source: "A", target: "C", weight: 5 },
+                    { source: "B", target: "D", weight: 2 },
+                    { source: "C", target: "D", weight: 4 },
+                    { source: "C", target: "E", weight: 3 },
+                    { source: "D", target: "E", weight: 2 }
+                ];
+                
+                // Create node map for easy lookup
+                const nodeMap = {};
+                nodes.forEach(node => {
+                    nodeMap[node.id] = node;
+                });
+                
+                // Draw links
+                const linkElements = svg.append("g")
+                    .selectAll("line")
+                    .data(links)
+                    .enter()
+                    .append("line")
+                    .attr("x1", d => nodeMap[d.source].x)
+                    .attr("y1", d => nodeMap[d.source].y)
+                    .attr("x2", d => nodeMap[d.target].x)
+                    .attr("y2", d => nodeMap[d.target].y)
+                    .attr("stroke", "#aaa")
+                    .attr("stroke-width", 2)
+                    .attr("marker-end", "url(#graph-arrow)");
+                    
+                // Add weights
+                svg.append("g")
+                    .selectAll("text")
+                    .data(links)
+                    .enter()
+                    .append("text")
+                    .attr("x", d => (nodeMap[d.source].x + nodeMap[d.target].x) / 2)
+                    .attr("y", d => (nodeMap[d.source].y + nodeMap[d.target].y) / 2 - 5)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "#666")
+                    .text(d => d.weight);
+                    
+                // Draw nodes
+                const nodeElements = svg.append("g")
+                    .selectAll("circle")
+                    .data(nodes)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y)
+                    .attr("r", 15)
+                    .attr("fill", "#fff")
+                    .attr("stroke", "#6f42c1")
+                    .attr("stroke-width", 2);
+                    
+                // Add node labels
+                svg.append("g")
+                    .selectAll("text")
+                    .data(nodes)
+                    .enter()
+                    .append("text")
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y + 5)
+                    .attr("text-anchor", "middle")
+                    .text(d => d.id);
+                    
+                // Store for animations
+                window.graphData = { svg, nodes, links, nodeMap, nodeElements, linkElements };
+            }
+            
+            // BFS animation
+            document.getElementById('graph-anim-bfs').addEventListener('click', function() {
+                const startNode = document.getElementById('graph-start-node').value;
+                const { svg, nodes, links, nodeMap, nodeElements, linkElements } = window.graphData;
+                
+                // Reset colors
+                nodeElements.attr("fill", "#fff");
+                linkElements.attr("stroke", "#aaa");
+                
+                // Build adjacency list
+                const adjList = {};
+                nodes.forEach(node => {
+                    adjList[node.id] = [];
+                });
+                
+                links.forEach(link => {
+                    adjList[link.source].push(link.target);
+                });
+                
+                // BFS algorithm
+                const visited = new Set();
+                const queue = [startNode];
+                const bfsOrder = [];
+                visited.add(startNode);
+                
+                while (queue.length > 0) {
+                    const current = queue.shift();
+                    bfsOrder.push(current);
+                    
+                    for (const neighbor of adjList[current]) {
+                        if (!visited.has(neighbor)) {
+                            visited.add(neighbor);
+                            queue.push(neighbor);
+                        }
+                    }
+                }
+                
+                // Animate BFS
+                let step = 0;
+                
+                function animateStep() {
+                    if (step < bfsOrder.length) {
+                        const current = bfsOrder[step];
+                        
+                        // Highlight current node
+                        nodeElements
+                            .filter(d => d.id === current)
+                            .attr("fill", "#ffc107");
+                            
+                        // Highlight edges to neighbors
+                        if (step < bfsOrder.length - 1) {
+                            linkElements
+                                .filter(d => d.source === current && adjList[current].includes(d.target))
+                                .attr("stroke", "#6f42c1");
+                        }
+                        
+                        step++;
+                        setTimeout(animateStep, 1000);
+                    }
+                }
+                
+                animateStep();
+            });
+            
+            // DFS animation
+            document.getElementById('graph-anim-dfs').addEventListener('click', function() {
+                const startNode = document.getElementById('graph-start-node').value;
+                const { svg, nodes, links, nodeMap, nodeElements, linkElements } = window.graphData;
+                
+                // Reset colors
+                nodeElements.attr("fill", "#fff");
+                linkElements.attr("stroke", "#aaa");
+                
+                // Build adjacency list
+                const adjList = {};
+                nodes.forEach(node => {
+                    adjList[node.id] = [];
+                });
+                
+                links.forEach(link => {
+                    adjList[link.source].push(link.target);
+                });
+                
+                // DFS algorithm
+                const visited = new Set();
+                const dfsOrder = [];
+                
+                function dfs(node) {
+                    visited.add(node);
+                    dfsOrder.push(node);
+                    
+                    for (const neighbor of adjList[node]) {
+                        if (!visited.has(neighbor)) {
+                            dfs(neighbor);
+                        }
+                    }
+                }
+                
+                dfs(startNode);
+                
+                // Animate DFS
+                let step = 0;
+                
+                function animateStep() {
+                    if (step < dfsOrder.length) {
+                        const current = dfsOrder[step];
+                        
+                        // Highlight current node
+                        nodeElements
+                            .filter(d => d.id === current)
+                            .attr("fill", "#ffc107");
+                            
+                        // Highlight edges to unvisited neighbors
+                        if (step < dfsOrder.length - 1) {
+                            const next = dfsOrder[step + 1];
+                            linkElements
+                                .filter(d => d.source === current && d.target === next)
+                                .attr("stroke", "#6f42c1");
+                        }
+                        
+                        step++;
+                        setTimeout(animateStep, 1000);
+                    }
+                }
+                
+                animateStep();
+            });
+            
+            // Shortest path (Dijkstra's algorithm)
+            document.getElementById('graph-anim-shortest').addEventListener('click', function() {
+                const startNode = document.getElementById('graph-start-node').value;
+                const { svg, nodes, links, nodeMap, nodeElements, linkElements } = window.graphData;
+                
+                // Reset colors
+                nodeElements.attr("fill", "#fff");
+                linkElements.attr("stroke", "#aaa");
+                
+                // Build adjacency list with weights
+                const adjList = {};
+                nodes.forEach(node => {
+                    adjList[node.id] = [];
+                });
+                
+                links.forEach(link => {
+                    adjList[link.source].push({ node: link.target, weight: link.weight });
+                });
+                
+                // Dijkstra's algorithm
+                const distances = {};
+                const previous = {};
+                const unvisited = new Set();
+                
+                // Initialize
+                nodes.forEach(node => {
+                    distances[node.id] = Infinity;
+                    previous[node.id] = null;
+                    unvisited.add(node.id);
+                });
+                
+                distances[startNode] = 0;
+                
+                while (unvisited.size > 0) {
+                    // Find node with minimum distance
+                    let minDistance = Infinity;
+                    let minNode = null;
+                    
+                    for (const nodeId of unvisited) {
+                        if (distances[nodeId] < minDistance) {
+                            minDistance = distances[nodeId];
+                            minNode = nodeId;
+                        }
+                    }
+                    
+                    if (minNode === null) break;
+                    
+                    unvisited.delete(minNode);
+                    
+                    // Update distances to neighbors
+                    for (const { node: neighbor, weight } of adjList[minNode]) {
+                        const alt = distances[minNode] + weight;
+                        if (alt < distances[neighbor]) {
+                            distances[neighbor] = alt;
+                            previous[neighbor] = minNode;
+                        }
+                    }
+                }
+                
+                // Find path to all nodes
+                const paths = {};
+                nodes.forEach(node => {
+                    if (node.id === startNode) return;
+                    
+                    const path = [];
+                    let current = node.id;
+                    
+                    while (current !== null) {
+                        path.unshift(current);
+                        current = previous[current];
+                    }
+                    
+                    paths[node.id] = path;
+                });
+                
+                // Animate shortest paths
+                let step = 0;
+                const nodeIdsToAnimate = nodes.map(n => n.id).filter(id => id !== startNode);
+                
+                function animateStep() {
+                    if (step < nodeIdsToAnimate.length) {
+                        const targetId = nodeIdsToAnimate[step];
+                        const path = paths[targetId];
+                        
+                        // Highlight path
+                        for (let i = 0; i < path.length - 1; i++) {
+                            const source = path[i];
+                            const target = path[i + 1];
+                            
+                            linkElements
+                                .filter(d => d.source === source && d.target === target)
+                                .attr("stroke", "#6f42c1")
+                                .attr("stroke-width", 3);
+                        }
+                        
+                        // Highlight target node
+                        nodeElements
+                            .filter(d => d.id === targetId)
+                            .attr("fill", "#ffc107");
+                            
+                        // Show distance
+                        svg.append("text")
+                            .attr("x", nodeMap[targetId].x)
+                            .attr("y", nodeMap[targetId].y - 20)
+                            .attr("text-anchor", "middle")
+                            .attr("fill", "#6f42c1")
+                            .attr("font-weight", "bold")
+                            .text(distances[targetId]);
+                        
+                        step++;
+                        setTimeout(animateStep, 1500);
+                    }
+                }
+                
+                // Highlight start node
+                nodeElements
+                    .filter(d => d.id === startNode)
+                    .attr("fill", "#28a745");
+                    
+                animateStep();
+            });
+            
+            document.getElementById('graph-anim-reset').addEventListener('click', initGraphAnimation);
+            
+            initGraphAnimation();
+            
+            // Quiz functionality
+            const quizOptions = document.querySelectorAll('.quiz-option');
+            
+            quizOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove previous selections in this question
+                    const question = this.closest('.quiz-card');
+                    question.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.classList.remove('selected-correct', 'selected-incorrect');
+                    });
+                    
+                    // Mark this option as selected
+                    if (this.hasAttribute('data-correct')) {
+                        this.classList.add('selected-correct');
+                    } else {
+                        this.classList.add('selected-incorrect');
+                    }
+                });
+            });
+            
+            document.getElementById('check-answers').addEventListener('click', function() {
+                const quizCards = document.querySelectorAll('.quiz-card');
+                let correctCount = 0;
+                
+                quizCards.forEach(card => {
+                    // Hide previous feedback
+                    card.querySelectorAll('.feedback').forEach(f => f.style.display = 'none');
+                    
+                    // Check selection
+                    const selected = card.querySelector('.quiz-option.selected-correct, .quiz-option.selected-incorrect');
+                    
+                    if (selected) {
+                        if (selected.hasAttribute('data-correct')) {
+                            correctCount++;
+                            card.querySelector('.feedback.correct').style.display = 'block';
+                        } else {
+                            card.querySelector('.feedback.incorrect').style.display = 'block';
+                        }
+                    }
+                });
+                
+                // Show overall result
+                alert(`Hai risposto correttamente a ${correctCount} domande su ${quizCards.length}!`);
+            });
+            
+            document.getElementById('reset-quiz').addEventListener('click', function() {
+                // Clear all selections and feedback
+                quizOptions.forEach(option => {
+                    option.classList.remove('selected-correct', 'selected-incorrect');
+                });
+                
+                document.querySelectorAll('.feedback').forEach(f => {
+                    f.style.display = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
